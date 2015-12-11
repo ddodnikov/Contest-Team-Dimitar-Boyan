@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> d22900ab883fb642c9691118e248e1282af3bd87
 public class Word {
 	
 	String cipheredWord;
