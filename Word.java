@@ -1,48 +1,136 @@
-package tasks;
-
 public class Word {
-
-	String text;
 	
-	int[] indexGetter(char[][] encryptionKey) {
-		int[] textIndexes = new int[this.text.length()];
-		for (int index=0;index<this.text.length();index++) {
-			for (int index2=0;index<this.text.length();index2++) {
-				for (int indexOfLetter=0;index<encryptionKey.length;indexOfLetter++) {
-					if (this.text.charAt(indexOfLetter)==encryptionKey[index][index2]) {
-						textIndexes[indexOfLetter]=index*10+index2;
+	String cipheredWord;
+	String decipheredWord;
+	
+	String decipher(String cipheredWord , char[][] key) {
+		
+		cipheredWord = cipheredWord.toUpperCase();
+		
+		if(cipheredWord.length()%2 != 0) {
+			cipheredWord += "P";
+		}
+		
+		String decipheredWord = "";
+		
+		int[] indexes = new int[4];
+		
+		for(int index = 0; index < cipheredWord.length() / 2; index++) {
+			
+			for(int row = 0; row < 5; row++) {
+				for(int col = 0; col < 5; col++) {
+					if(key[row][col] == cipheredWord.charAt(index*2)) {
+						indexes[0] = row;
+						indexes[1] = col;
+					}
+					if(key[row][col] == cipheredWord.charAt(index*2+1)) {
+						indexes[2] = row;
+						indexes[3] = col;
 					}
 				}
 			}
-		}
-		return textIndexes;
-	}
-		String encrypt(char[][] encryptionKey) {
-			char[] encryptedText;
-			if (this.text.length()%2!=0) {
-				encryptedText = new char[this.text.length()+1];
-			}
-			else {
-				encryptedText = new char[this.text.length()];
-			}
-			int[] textIndexes=indexGetter(encryptionKey);
-			for (int index=0;index<this.text.length()/2;index+=2) {
-				if (textIndexes[index]/10==textIndexes[index+1]/10) {
-					encryptedText[index]=encryptionKey[textIndexes[index]/10+1][textIndexes[index]%10];
-					encryptedText[index+1]=encryptionKey[textIndexes[index+1]/10+1][textIndexes[index]%10];
-					continue;
-				} // Moving one row downwards, check if condition is the same as assignment
-				if (textIndexes[index]%10==textIndexes[index+1]%10) {
-					encryptedText[index]=encryptionKey[textIndexes[index]/10][textIndexes[index]%10+1];
-					encryptedText[index+1]=encryptionKey[textIndexes[index]/10][textIndexes[index]%10+1];
-					continue;
-				} // Moving one column to the right
-				encryptedText[index]=encryptionKey[textIndexes[index]/10][textIndexes[index+1]%10];
-				encryptedText[index+1]=encryptionKey[textIndexes[index+1]/10][textIndexes[index]%10];
-				// swapping columns
+			
+			if(indexes[0] == indexes[2]) {
+				if(indexes[1] != 4) {
+					decipheredWord += key[indexes[0]][indexes[1]+1];
+				} else {
+					decipheredWord += key[indexes[0]][0];
+				}
+				if(indexes[3] != 4) {
+					decipheredWord += key[indexes[2]][indexes[3]+1];
+				} else {
+					decipheredWord += key[indexes[2]][0];
+				}
 			} 
-			return encryptedText.toString();
+			
+			if(indexes[1] == indexes[3]) {
+				if(indexes[0] != 4) {
+					decipheredWord += key[indexes[0]+1][indexes[1]];
+				} else {
+					decipheredWord += key[0][indexes[1]];
+				}
+				if(indexes[2] != 4) {
+					decipheredWord += key[indexes[2]+1][indexes[3]];
+				} else {
+					decipheredWord += key[0][indexes[3]];
+				}
+			}
+			
+			if(indexes[0] != indexes[2] && indexes[1] != indexes[3]) {
+				decipheredWord += key[indexes[0]][indexes[3]];
+				decipheredWord += key[indexes[2]][indexes[1]];
+			}
 		}
 		
+		System.out.println("Word to be deciphered : " + cipheredWord);
+		return decipheredWord;
+		
+	}
 	
+	String cipher(String decipheredWord , char[][] key) {
+		
+		decipheredWord = decipheredWord.toUpperCase();
+		
+		if(decipheredWord.length()%2 != 0) {
+			decipheredWord += "P";
+		}
+		
+		String cipheredWord = "";
+		
+		int[] indexes = new int[4];
+		
+		for(int index = 0; index < decipheredWord.length() / 2; index++) {
+			
+			for(int row = 0; row < 5; row++) {
+				for(int col = 0; col < 5; col++) {
+					if(key[row][col] == decipheredWord.charAt(index*2)) {
+						indexes[0] = row;
+						indexes[1] = col;
+					}
+					if(key[row][col] == decipheredWord.charAt(index*2+1)) {
+						indexes[2] = row;
+						indexes[3] = col;
+					}
+				}
+			}
+			
+			if(indexes[0] == indexes[2]) {
+				if(indexes[1] != 0) {
+					cipheredWord += key[indexes[0]][indexes[1]-1];
+				} else {
+					cipheredWord += key[indexes[0]][4];
+				}
+				if(indexes[3] != 0) {
+					cipheredWord += key[indexes[2]][indexes[3]-1];
+				} else {
+					cipheredWord += key[indexes[2]][4];
+				}
+			} 
+			
+			if(indexes[1] == indexes[3]) {
+				if(indexes[0] != 0) {
+					cipheredWord += key[indexes[0]-1][indexes[1]];
+				} else {
+					cipheredWord += key[4][indexes[1]];
+				}
+				if(indexes[2] != 0) {
+					cipheredWord += key[indexes[2]-1][indexes[3]];
+				} else {
+					cipheredWord += key[4][indexes[3]];
+				}
+			}
+			
+			if(indexes[0] != indexes[2] && indexes[1] != indexes[3]) {
+				cipheredWord += key[indexes[0]][indexes[3]];
+				cipheredWord += key[indexes[2]][indexes[1]];
+			}
+		}
+		
+		System.out.println("Word to be ciphered : " + decipheredWord);
+		return cipheredWord;
+		
+	}
+	
+
+	        
 }
