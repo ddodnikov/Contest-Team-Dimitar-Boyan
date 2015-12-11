@@ -131,4 +131,11 @@ public class TicTacToe {
 		}
 		return this.board[row][col][0]==this.board[rowOriginal][colOriginal][0];
 	}
+	
+	//main method
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		TicTacToe game = new TicTacToe();
+		game.play();
 }
